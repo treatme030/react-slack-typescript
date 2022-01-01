@@ -1,5 +1,5 @@
 ## 👨‍👩‍👧‍👧 react-slack-typescript
- * SWR 사용해서 데이터 가져오기
+ * [SWR](https://swr.vercel.app) 사용해서 데이터 가져오기
  ```javascript
  const { data, error } = useSWR('http://localhost:3095/api/users', fetcher);
  ```
