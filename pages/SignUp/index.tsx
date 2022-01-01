@@ -2,11 +2,12 @@ import React, { useCallback, useState } from 'react';
 import axios from 'axios';
 import useInput from '@hooks/useInput';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from '@pages/SignUp/styles';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
 
-  const [nickname, onChangeNickname, setNickname] = useInput('');
-  const [email, onChangeEmail, setEmail] = useInput('');
+  const [nickname, onChangeNickname] = useInput('');
+  const [email, onChangeEmail] = useInput('');
   const [password, setpassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [mismatchError, setMismatchError] = useState(false);
@@ -40,11 +41,9 @@ const SignUp = () => {
         password
       })
       .then((response) => {
-        console.log(response);
         setSignUpSuccess(true);
       })
       .catch((error) => {
-        console.log(error.response);
         setSignUpError(error.response.data);
       })
       .finally(() => {});
@@ -111,7 +110,7 @@ const SignUp = () => {
       </Form>
       <LinkContainer>
         이미 회원이신가요?&nbsp;
-        <a href="/login">로그인 하러가기</a>
+        <Link to="/login">로그인 하러가기</Link>
       </LinkContainer>
     </div>
   );
