@@ -26,6 +26,8 @@ import {
   Workspaces,
   WorkspaceWrapper,
 } from '@layouts/Workspace/styles';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -57,7 +59,28 @@ const Workspace: FC = ({ children }) => {
 
   const onCreateWorkspace = useCallback((e) => {
     e.preventDefault();
-  },[]);
+    if(!newWorkspace || !newWorkspace.trim()){
+      return;
+    }
+    if(!newUrl || !newUrl.trim()){
+      return;
+    }
+    toast.configure();
+    axios.post('http://localhost:3095/api/workspaces', {
+      workspace: newWorkspace,
+      url: newUrl,
+    }, {
+      withCredentials: true,
+    })
+    .then((response) => {
+      mutate();
+      setNewWorkspace('');
+      setNewUrl('');
+    })
+    .catch((error) => {
+      toast.error(error.response?.data, { position: 'bottom-center' });
+    });
+  },[newWorkspace, newUrl]);
 
   if(!userData){
     return <Redirect to="/login" />
