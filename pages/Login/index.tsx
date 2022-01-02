@@ -7,7 +7,9 @@ import fetcher from '@utils/fetcher';
 import axios from 'axios';
 
 const LogIn = () => {
-  const { data, error } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 100000,
+  });
 
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -22,7 +24,9 @@ const LogIn = () => {
     }, {
       withCredentials: true
     })
-    .then((response) => {})
+    .then((response) => {
+      mutate();
+    })
     .catch((error) => {
       setLoginError(error.response?.data?.statusCode === 401);
     });
