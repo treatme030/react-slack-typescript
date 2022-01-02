@@ -1,15 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import useInput from '@hooks/useInput';
 import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/SignUp/styles';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher, {
-    dedupingInterval: 100000,
-  });
+  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -31,6 +29,10 @@ const LogIn = () => {
       setLoginError(error.response?.data?.statusCode === 401);
     });
   },[email, password]);
+
+  if(data){
+    return <Redirect to="/workspace/channel" />
+  }
 
   return (
     <div id="container">
