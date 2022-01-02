@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { VFC, useCallback, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
@@ -9,6 +9,7 @@ import Menu from '@components/Menu';
 import { Button, Input, Label } from '@pages/SignUp/styles';
 import useInput from '@hooks/useInput';
 import Modal from '@components/Modal';
+import CreateChannelModal from '@components/CreateChannelModal';
 import grvatar from 'gravatar';
 import {
   AddButton,
@@ -32,10 +33,12 @@ import 'react-toastify/dist/ReactToastify.css';
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 
-const Workspace: FC = ({ children }) => {
+const Workspace: VFC = () => {
   const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
+  const [showSleactMenu, setShowSleactMenu] = useState(false);
+  const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
@@ -48,14 +51,6 @@ const Workspace: FC = ({ children }) => {
     })
     .catch((error) => {})
   },[]);
-
-  const onClickUserProfile = useCallback(() => {
-    setShowUserMenu(!showUserMenu);
-  },[showUserMenu]);
-
-  const onClickCreateWorkspace = useCallback(() => {
-    setShowCreateWorkspaceModal(!showCreateWorkspaceModal);
-  },[showCreateWorkspaceModal]);
 
   const onCreateWorkspace = useCallback((e) => {
     e.preventDefault();
@@ -81,6 +76,27 @@ const Workspace: FC = ({ children }) => {
       toast.error(error.response?.data, { position: 'bottom-center' });
     });
   },[newWorkspace, newUrl]);
+
+  const onClickUserProfile = useCallback(() => {
+    setShowUserMenu(!showUserMenu);
+  },[showUserMenu]);
+
+  const onClickCreateWorkspaceModal = useCallback(() => {
+    setShowCreateWorkspaceModal(true);
+  },[]);
+
+  const onCloseModal = useCallback(() => {
+    setShowCreateWorkspaceModal(false);
+    setShowCreateChannelModal(false);
+  },[]);
+
+  const onClickWorkspaceSleact = useCallback(() => {
+    setShowSleactMenu(!showSleactMenu);
+  },[showSleactMenu]);
+
+  const onClickAddChannel = useCallback(() => {
+    setShowCreateChannelModal(true);
+  },[]);
 
   if(!userData){
     return <Redirect to="/login" />
@@ -122,11 +138,24 @@ const Workspace: FC = ({ children }) => {
               </Link>
             )
           })}
-          <AddButton onClick={onClickCreateWorkspace}>+</AddButton>
+          <AddButton onClick={onClickCreateWorkspaceModal}>+</AddButton>
         </Workspaces>
         <Channels>
-          <WorkspaceName>Sleact</WorkspaceName>
-          <MenuScroll>menuscroll</MenuScroll>
+          <WorkspaceName onClick={onClickWorkspaceSleact}>Sleact</WorkspaceName>
+          <MenuScroll>
+            {showSleactMenu && (
+            <Menu 
+            onCloseMenu={onClickWorkspaceSleact} 
+            style={{ top: '95px', left: '80px' }}
+            >
+              <WorkspaceModal>
+                <h2>Sleact</h2>
+                <button onClick={onClickAddChannel}>채널 만들기</button>
+                <button onClick={onLogout}>로그아웃</button>
+              </WorkspaceModal>
+            </Menu>
+            )}
+          </MenuScroll>
         </Channels>
         <Chats>
           <Switch>
@@ -136,7 +165,7 @@ const Workspace: FC = ({ children }) => {
         </Chats>
       </WorkspaceWrapper>
       {showCreateWorkspaceModal && (
-        <Modal onCloseModal={onClickCreateWorkspace} >
+        <Modal onCloseModal={onCloseModal} >
           <form onSubmit={onCreateWorkspace}>
             <Label id="workspaceName">
               <span>workspace name</span>
@@ -149,6 +178,12 @@ const Workspace: FC = ({ children }) => {
             <Button type="submit">생성하기</Button>
           </form>
         </Modal>
+      )}
+      {showCreateChannelModal && (
+      <CreateChannelModal 
+      show={showCreateChannelModal}
+      onCloseModal={onCloseModal}
+      />
       )}
     </div>
   );
