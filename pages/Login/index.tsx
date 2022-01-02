@@ -23,7 +23,7 @@ const LogIn = () => {
       withCredentials: true
     })
     .then((response) => {
-      mutate();
+      mutate(response.data);
     })
     .catch((error) => {
       setLoginError(error.response?.data?.statusCode === 401);
@@ -34,7 +34,7 @@ const LogIn = () => {
   if(data === undefined){
     return <div>로딩중...</div>
   }
-  
+
   if(data){
     return <Redirect to="/workspace/channel" />
   }
