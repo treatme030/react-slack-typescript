@@ -2,8 +2,8 @@ import React, { VFC, useCallback, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
-import { Redirect, Switch, Route, Link } from 'react-router-dom';
-import { IUser } from '@typings/db';
+import { Redirect, Switch, Route, Link, useParams } from 'react-router-dom';
+import { IChannel, IUser } from '@typings/db';
 import loadable from '@loadable/component';
 import Menu from '@components/Menu';
 import { Button, Input, Label } from '@pages/SignUp/styles';
@@ -34,7 +34,12 @@ const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 
 const Workspace: VFC = () => {
+  const { workspace } = useParams<{ workspace: string, channel: string }>();
+
   const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
+  const { data: channelData } = useSWR<IChannel[]>(userData ? 
+    `http://localhost:3095/api/workspaces/${workspace}/channels` : null, fetcher);
+
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [showSleactMenu, setShowSleactMenu] = useState(false);
@@ -73,6 +78,7 @@ const Workspace: VFC = () => {
       setNewUrl('');
     })
     .catch((error) => {
+      console.dir(error);
       toast.error(error.response?.data, { position: 'bottom-center' });
     });
   },[newWorkspace, newUrl]);
@@ -155,12 +161,13 @@ const Workspace: VFC = () => {
               </WorkspaceModal>
             </Menu>
             )}
+            {channelData?.map((channel) => (<div>{channel.name}</div>))}
           </MenuScroll>
         </Channels>
         <Chats>
           <Switch>
-            <Route path="/workspace/channel" exact component={Channel} />
-            <Route path="/workspace/dm" exact component={DirectMessage} />
+            <Route path="/workspace/:workspace/channel/:channel" exact component={Channel} />
+            <Route path="/workspace/:workspace/dm/:id" exact component={DirectMessage} />
           </Switch>
         </Chats>
       </WorkspaceWrapper>
@@ -182,7 +189,9 @@ const Workspace: VFC = () => {
       {showCreateChannelModal && (
       <CreateChannelModal 
       show={showCreateChannelModal}
+      setShow={setShowCreateChannelModal}
       onCloseModal={onCloseModal}
+      onClickWorkspaceSleact={onClickWorkspaceSleact}
       />
       )}
     </div>
