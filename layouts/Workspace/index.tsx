@@ -31,6 +31,8 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import InviteChannelModal from '@components/InviteChannelModal';
+import ChannelList from '@components/ChannelList';
+import DMList from '@components/DMList';
 
 const Channel = loadable(() => import('@pages/Channel'));
 const DirectMessage = loadable(() => import('@pages/DirectMessage'));
@@ -170,7 +172,8 @@ const Workspace: VFC = () => {
               </WorkspaceModal>
             </Menu>
             )}
-            {channelData?.map((channel) => (<div>{channel.name}</div>))}
+            <ChannelList />
+            <DMList />
           </MenuScroll>
         </Channels>
         <Chats>
