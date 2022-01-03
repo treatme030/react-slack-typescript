@@ -34,7 +34,7 @@ const LogIn = () => {
   }
 
   if(data){
-    return <Redirect to="/workspace/sleact/channel/general" />
+    return <Redirect to="/workspaces/sleact/channel/일반" />
   }
 
   return (

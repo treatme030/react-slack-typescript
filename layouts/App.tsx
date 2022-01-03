@@ -12,7 +12,7 @@ const App = () => {
       <Redirect exact path="/" to="/login" />
       <Route path="/login" component={LogIn} />
       <Route path="/signUp" component={SignUp} />
-      <Route path="/workspace/:workspace" component={Workspace} />
+      <Route path="/workspaces/:workspace" component={Workspace} />
     </Switch>
   );
 };
