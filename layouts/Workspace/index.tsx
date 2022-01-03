@@ -41,7 +41,9 @@ const Workspace: VFC = () => {
   const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
   const { data: channelData } = useSWR<IChannel[]>(userData ? 
     `http://localhost:3095/api/workspaces/${workspace}/channels` : null, fetcher);
-
+  const { mutate: memberData } = useSWR<IUser[]>(userData ? 
+    `http://localhost:3095/api/workspaces/${workspace}/members` : null, fetcher);
+  
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
   const [showSleactMenu, setShowSleactMenu] = useState(false);
@@ -52,9 +54,7 @@ const Workspace: VFC = () => {
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
   const onLogout = useCallback(() => {
-    axios.post('http://localhost:3095/api/users/logout', null, {
-      withCredentials: true,
-    })
+    axios.post('http://localhost:3095/api/users/logout', null)
     .then((response) => {
       mutate(false);
     })
@@ -73,8 +73,6 @@ const Workspace: VFC = () => {
     axios.post('http://localhost:3095/api/workspaces', {
       workspace: newWorkspace,
       url: newUrl,
-    }, {
-      withCredentials: true,
     })
     .then((response) => {
       mutate();

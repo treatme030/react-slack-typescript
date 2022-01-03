@@ -32,8 +32,6 @@ const CreateChannelModal: VFC<Props> = ({ show, setShow, onCloseModal }) => {
     toast.configure();
     axios.post(`http://localhost:3095/api/workspaces/${workspace}/channels`, {
       name: newChannel,
-    }, {
-      withCredentials: true,
     })
     .then((response) => {
       mutateChannel();

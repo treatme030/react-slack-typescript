@@ -31,8 +31,6 @@ const InviteChannelModal: VFC<Props> = ({ setShow, onCloseModal }) => {
     toast.configure();
     axios.post(`http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members`, {
       email: newMember,
-    }, {
-      withCredentials: true,
     })
     .then((response) => {
       mutate();
