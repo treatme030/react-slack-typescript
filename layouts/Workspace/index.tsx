@@ -38,11 +38,11 @@ const DirectMessage = loadable(() => import('@pages/DirectMessage'));
 const Workspace: VFC = () => {
   const { workspace } = useParams<{ workspace: string }>();
 
-  const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
+  const { data: userData, error, mutate } = useSWR<IUser | false>('/api/users', fetcher);
   const { data: channelData } = useSWR<IChannel[]>(userData ? 
-    `http://localhost:3095/api/workspaces/${workspace}/channels` : null, fetcher);
+    `/api/workspaces/${workspace}/channels` : null, fetcher);
   const { mutate: memberData } = useSWR<IUser[]>(userData ? 
-    `http://localhost:3095/api/workspaces/${workspace}/members` : null, fetcher);
+    `/api/workspaces/${workspace}/members` : null, fetcher);
   
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
@@ -54,7 +54,7 @@ const Workspace: VFC = () => {
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
   const onLogout = useCallback(() => {
-    axios.post('http://localhost:3095/api/users/logout', null)
+    axios.post('/api/users/logout', null)
     .then((response) => {
       mutate(false);
     })
@@ -70,7 +70,7 @@ const Workspace: VFC = () => {
       return;
     }
     toast.configure();
-    axios.post('http://localhost:3095/api/workspaces', {
+    axios.post('/api/workspaces', {
       workspace: newWorkspace,
       url: newUrl,
     })

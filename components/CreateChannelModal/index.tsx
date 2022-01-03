@@ -18,9 +18,9 @@ interface Props {
 
 const CreateChannelModal: VFC<Props> = ({ show, setShow, onCloseModal }) => {
   const { workspace } = useParams<{ workspace: string }>();
-  const { data: userData, error, mutate } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher);
+  const { data: userData, error, mutate } = useSWR<IUser | false>('/api/users', fetcher);
   const { data: channelData, mutate: mutateChannel } = useSWR<IChannel[]>(userData ? 
-    `http://localhost:3095/api/workspaces/${workspace}/channels` : null, fetcher);
+    `/api/workspaces/${workspace}/channels` : null, fetcher);
 
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
 
@@ -30,7 +30,7 @@ const CreateChannelModal: VFC<Props> = ({ show, setShow, onCloseModal }) => {
       return;
     }
     toast.configure();
-    axios.post(`http://localhost:3095/api/workspaces/${workspace}/channels`, {
+    axios.post(`/api/workspaces/${workspace}/channels`, {
       name: newChannel,
     })
     .then((response) => {

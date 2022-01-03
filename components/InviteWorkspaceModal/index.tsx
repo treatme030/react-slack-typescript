@@ -17,9 +17,9 @@ interface Props {
 
 const InviteWorkspaceModal: VFC<Props> = ({ onCloseModal, setShow }) => {
   const { workspace } = useParams<{ workspace: string }>();
-  const { data: userData } = useSWR<IUser>('http://localhost:3095/api/users', fetcher);
+  const { data: userData } = useSWR<IUser>('/api/users', fetcher);
   const { mutate } = useSWR<IUser[]>(userData ? 
-    `http://localhost:3095/api/workspaces/${workspace}/members` : null, fetcher);
+    `/api/workspaces/${workspace}/members` : null, fetcher);
 
   const [newMember, onChangeNewMember, setNewMember] = useInput('')
 
@@ -29,7 +29,7 @@ const InviteWorkspaceModal: VFC<Props> = ({ onCloseModal, setShow }) => {
       return;
     }
     toast.configure();
-    axios.post(`http://localhost:3095/api/workspaces/${workspace}/members`, {
+    axios.post(`/api/workspaces/${workspace}/members`, {
       email: newMember,
     })
     .then((response) => {

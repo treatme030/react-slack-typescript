@@ -7,7 +7,7 @@ import fetcher from '@utils/fetcher';
 import axios from 'axios';
 
 const LogIn = () => {
-  const { data, error, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, mutate } = useSWR('/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
@@ -16,7 +16,7 @@ const LogIn = () => {
   const onSubmit = useCallback((e) => {
     e.preventDefault();
     setLoginError(false);
-    axios.post('http://localhost:3095/api/users/login', {
+    axios.post('/api/users/login', {
       email,
       password
     })
